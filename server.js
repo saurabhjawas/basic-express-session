@@ -12,9 +12,9 @@ const LocalSrategy = require('passport-local').Strategy
 const axios = require('axios')
 const bcrypt = require('bcrypt')
 
-const users = [
-  {id: '2f24vvg', email: 'test@test.com', password: 'password'}
-]
+// const users = [
+//   {id: '2f24vvg', email: 'test@test.com', password: 'password'}
+// ]
 
 // configure passport.js to use the local strategy
 passport.use(new LocalSrategy(
