@@ -83,7 +83,7 @@ app.use(session({
   store: new FileStore(),
   secret: 'SECRET_SESSION_KEY',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: false
 }));
 
 app.use(passport.initialize());
