@@ -1,11 +1,18 @@
 /*
 tutorial refrence: https://medium.com/@evangow/server-authentication-basics-express-sessions-passport-and-curl-359b7456003d
+
+Addon tutorial to use postgresdb as session store: https://javabeat.net/expressjs-session-store/
+
 */
 const express = require('express')
 const bodyParser = require('body-parser')
 const uuid = require('uuid/v4')
 const session = require('express-session')
-const FileStore = require('session-file-store')(session) 
+
+// as we are going to use postgres as asession store so below import is not needed
+// const FileStore = require('session-file-store')(session) 
+
+const PostgresSessionStore = require('connect-pg-simple')(session)
 
 const passport = require('passport')
 const LocalSrategy = require('passport-local').Strategy
@@ -70,6 +77,17 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+
+
+// configuration of postgressession store
+const pgSessionStore = new PostgresSessionStore({
+  /*  *connection string is built by following the syntax:
+  postgres://USERNAME:PASSWORD@HOST_NAME:PORT/DB_NAME
+  */
+  conString: "postgres://user_sessionstore:sessionstore@localhost:5432/db_demo_sessionstore"
+})
+
+
 // configure session middleware adding it to the express app
 app.use(session({
   genid: req => {
@@ -80,7 +98,7 @@ app.use(session({
     return generatedId 
     // the value returned will be session id
   },
-  store: new FileStore(),
+  store: pgSessionStore, // new FileStore(), -- this one is replace with session store on posgres
   secret: 'SECRET_SESSION_KEY',
   resave: false,
   saveUninitialized: false

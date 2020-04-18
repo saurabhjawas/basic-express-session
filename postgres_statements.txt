@@ -1,0 +1,27 @@
+// first login as super user i.e. postgres
+
+CREATE USER user_sessionstore WITH NOCREATEDB NOCREATEROLE PASSWORD 'sessionstore';
+
+CREATE DATABASE db_demo_sessionstore;
+
+
+\c db_demo_sessionstore;
+
+CREATE SCHEMA schema_sessionstore AUTHORIZATION user_sessionstore;
+
+ALTER USER user_sessionstore SET search_path=schema_sessionstore;
+
+
+\c db_demo_sessionstore user_sessionstore;
+
+
+CREATE TABLE schema_sessionstore."session" (
+  "sid" varchar NOT NULL COLLATE "default",
+	"sess" json NOT NULL,
+	"expire" timestamp(6) NOT NULL
+)
+WITH (OIDS=FALSE);
+
+ALTER TABLE schema_sessionstore."session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+
+CREATE INDEX "IDX_session_expire" ON schema_sessionstore."session" ("expire");
